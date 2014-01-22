@@ -2,6 +2,7 @@
 """
 @author: Andrew Shim
 
+Python wrapper for SurveyMonkey API: https://developer.surveymonkey.com/
 """
 
 import json
