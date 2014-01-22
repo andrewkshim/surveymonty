@@ -24,7 +24,7 @@ class SurveyMonty(object):
             "api_key": api_key
         }
 
-    def get_json_response(self, endpoint, options):
+    def _get_json_response(self, endpoint, options):
         """Generic method to query api, used by more specific methods"""
         uri = "/".join([
             SURVEY_MONKEY_HOST,
@@ -43,7 +43,7 @@ class SurveyMonty(object):
     def get_survey_list(self, options=None):
         """Return surveys in JSON format"""
         endpoint = "surveys/get_survey_list"
-        json_response = self.get_json_response(endpoint, options)
+        json_response = self._get_json_response(endpoint, options)
         survey_list = []
         if (json_response["data"] and json_response["data"]["surveys"]):
             survey_list = json_response["data"]["surveys"]
@@ -60,7 +60,7 @@ class SurveyMonty(object):
             if options is None:
                 options = {}
             options["survey_id"] = survey_id
-            json_response = self.get_json_response(endpoint, options)
+            json_response = self._get_json_response(endpoint, options)
         if json_response["data"]:
             survey = json_response["data"]
         else:
@@ -75,7 +75,7 @@ class SurveyMonty(object):
             if options is None:
                 options = {}
             options["survey_id"] = survey_id
-            json_response = self.get_json_response(endpoint, options)
+            json_response = self._get_json_response(endpoint, options)
         if json_response["data"]:
             collector_list = json_response["data"]
         else:
@@ -89,7 +89,7 @@ class SurveyMonty(object):
             if options is None:
                 options = {}
             options["survey_id"] = survey_id
-            json_response = self.get_json_response(endpoint, options)
+            json_response = self._get_json_response(endpoint, options)
         if json_response["data"]:
             respondent_list = json_response["data"]
         else:
@@ -105,7 +105,7 @@ class SurveyMonty(object):
                 options = {}
             options["respondent_ids"] = respondent_ids
             options["survey_id"] = survey_id
-            json_response = self.get_json_response(endpoint, options)
+            json_response = self._get_json_response(endpoint, options)
         print json_response
         if json_response["data"]:
             response_list = json_response["data"]
@@ -120,7 +120,7 @@ class SurveyMonty(object):
             if options is None:
                 options = {}
             options["collector_id"] = collector_id
-            json_response = self.get_json_response(endpoint, options)
+            json_response = self._get_json_response(endpoint, options)
         if json_response["data"]:
             response_count = json_response["data"]
         return response_count
@@ -130,13 +130,8 @@ class SurveyMonty(object):
         user_details = {}
         if options is None:
             options = {}
-        json_response = self.get_json_response(endpoint, options)
+        json_response = self._get_json_response(endpoint, options)
         if json_response["data"]:
             user_details = json_response["data"]
         return user_details
 
-
-class Survey(object):
-
-    def __init__(self):
-        pass
