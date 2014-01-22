@@ -12,7 +12,7 @@ SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
 API_VERSION = "v2"
 
 
-class SurveyMonkey(object):
+class SurveyMonty(object):
 
     def __init__(self, access_token, api_key):
         self.client = requests.session()

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import surveymonkey
+import surveymonty
 
 ACCESS_TOKEN = """UFHR1aBDl2QjFoOzyDhoj91aM1Q3Atp-HtOvcI8kBk.HIBEdrGLtGKLnbSmHGcE-gshszv3.Fq7jYtrx7muQMYaZWWFEupCGMmMz1mmerRk="""
 API_KEY = "w2jcncuywg9rep4439z5amvd"
@@ -10,7 +10,7 @@ RESPONDENT_IDS = ["3022778452"]
 
 
 def main():
-    api = surveymonkey.SurveyMonkey(ACCESS_TOKEN, API_KEY)
+    api = surveymonty.SurveyMonty(ACCESS_TOKEN, API_KEY)
     # Test API methods, cannot do more than 2 at a time due to 2 requests per
     # second limit set by SurveyMonkey
     #print api.get_survey_list()
