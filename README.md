@@ -6,6 +6,10 @@ is a wrapper in Python, and Python makes me think of [Monty Python][1]. Also,
 
 [1]:http://en.wikipedia.org/wiki/Monty_Python
 
+# Installation
+Simply copy [surveymonty.py][./surveymonty.py] to the directory of the calling
+Python file.
+
 # Example
 This wrapper is very lightweight and provides no object encapsulation of the
 responses. Rather, it provides the API methods in Python form, through which
@@ -32,3 +36,5 @@ api.get_survey_details(SURVEY_ID)
 - get\_response\_count()
 - get\_user\_details()
 
+## TODO
+- Make available through `pip`
