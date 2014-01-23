@@ -10,22 +10,62 @@ import requests
 
 SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
 API_VERSION = "v2"
+# Status codes viewable at:
+# https://developer.surveymonkey.com/mashery/requests_responses
+STATUS_CODES = [
+    "Success",
+    "Not Authenticated",
 
+
+]
 
 class SurveyMonty(object):
+    """
+    API object, call SurveyMonkey API methods on this object.
+    """
 
     def __init__(self, access_token, api_key):
-        self.client = requests.session()
-        self.client.headers = {
+        """
+        Initialize SurveyMonty instance with an HTTP session. Set the session
+        header to contain the access token, and the session params to contain
+        the API key. Subsequent calls to the API will be done through the
+        instance's session.
+
+        Args:
+            access_token: A long alphanumeric string. Tied to a specific
+                SurveyMonkey user account, and the owner of the account must
+                authorize you (the developer) to access their token.
+            api_key: An alphanumeric string (shorter than access_token).
+                Specific to your developer account and can be viewed in your
+                profile.
+
+        Returns:
+            Called in constructor, so you can say this method returns a
+            SurveyMonty instance.
+        """
+        self.session = requests.session()
+        self.session.headers = {
             "Authorization": "bearer %s" % access_token,
             "Content-Type": "application/json"
         }
-        self.client.params = {
+        self.session.params = {
             "api_key": api_key
         }
 
     def _get_json_response(self, endpoint, options):
-        """Generic method to query api, used by more specific methods"""
+        """
+        Generic method to query API, used by more specific API methods.
+
+        Args:
+            endpoint: A string containing the path to the API endpoint. This
+                method constructs the full URI using this endpoint string.
+            options: A dictionary containing options to format the JSON
+                response. Specific option information is available for each
+                API method at https://developer.surveymonkey.com/.
+
+        Returns:
+            A dictionary representative of the JSON response.
+        """
         uri = "/".join([
             SURVEY_MONKEY_HOST,
             API_VERSION,
@@ -33,8 +73,9 @@ class SurveyMonty(object):
         ])
         if options is None:
             options = {}
-        response = self.client.post(uri, data=json.dumps(options))
+        response = self.session.post(uri, data=json.dumps(options))
         json_response = response.json()
+        print json_response
         return json_response
 
     # Below are the specific API methods
@@ -42,7 +83,7 @@ class SurveyMonty(object):
     # tease out this requirement to avoid repetition
     def get_survey_list(self, options=None):
         """Return surveys in JSON format"""
-        endpoint = "surveys/get_survey_list"
+        endpoint = "surveys/get_survey_lis"
         json_response = self._get_json_response(endpoint, options)
         survey_list = []
         if (json_response["data"] and json_response["data"]["surveys"]):
