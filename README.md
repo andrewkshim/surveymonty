@@ -7,7 +7,7 @@ is a wrapper in Python, and Python makes me think of [Monty Python][1]. Also,
 [1]:http://en.wikipedia.org/wiki/Monty_Python
 
 # Installation
-Simply copy [surveymonty.py][./surveymonty.py] to the directory of the calling
+Simply copy [surveymonty.py](./surveymonty.py) to the directory of the calling
 Python file.
 
 # Example
