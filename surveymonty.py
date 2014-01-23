@@ -10,14 +10,48 @@ import requests
 
 SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
 API_VERSION = "v2"
-# Status codes viewable at:
-# https://developer.surveymonkey.com/mashery/requests_responses
-STATUS_CODES = [
-    "Success",
-    "Not Authenticated",
 
 
-]
+class SurveyMontyError(Exception):
+    """
+    Custom SurveyMonkey Exception. Uses status code messages provided at:
+    https://developer.surveymonkey.com/mashery/requests_responses
+    """
+    # Status codes correspond to indicies.
+    STATUS_CODE_MESSAGES = [
+        "Success",
+        "Not Authenticated",
+        "Invalid User Credentials",
+        "Invalid Request",
+        "Unknown User",
+        "System Error"
+    ]
+
+    def __init__(self, status_code):
+        """
+        Args:
+            status_code: Integer ranging from 0 to 5 inclusive.
+        Returns:
+            Called in constructor. Implicitly returns a SurveyMontyError
+            instance.
+        Raises:
+            ValueError: When status_code is out of range.
+        """
+        if status_code in range(0,6):
+            self.status_code = status_code
+        else:
+            raise ValueError("Status code out of range.")
+
+    def __str__(self):
+        """
+        Returns:
+            String representation of the SurveyMontyError instance.
+        """
+        return "SurveyMonkey API Error {status_code}: {message}".format(
+            status_code=str(self.status_code),
+            message=STATUS_CODE_MESSAGES[self.status_code]
+        )
+
 
 class SurveyMonty(object):
     """
@@ -75,8 +109,10 @@ class SurveyMonty(object):
             options = {}
         response = self.session.post(uri, data=json.dumps(options))
         json_response = response.json()
-        print json_response
-        return json_response
+        if "status" in json_response and json_response["status"] == 0:
+            return json_response
+        else:
+            pass
 
     # Below are the specific API methods
     # every method has a default option=None arg, may be better way to
