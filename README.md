@@ -6,12 +6,12 @@ is a wrapper in Python, and Python makes me think of [Monty Python][1]. Also,
 
 [1]:http://en.wikipedia.org/wiki/Monty_Python
 
-# Use Cases
+# Example
 This wrapper is very lightweight and provides no object encapsulation of the
 responses. Rather, it provides the API methods in Python form, through which
 you can obtain the JSON responses and do with them as you please.
 
-Sample python script using SurveyMonty:
+Sample Python script using SurveyMonty:
 ```python
 import surveymonty
 
@@ -19,7 +19,7 @@ ACCESS_TOKEN = "YOUR_ACCESS_TOKEN" # A very long string of characters
 API_KEY = "YOUR_API_KEY" # A not-as-long string of alphanumeric characters
 
 api = surveymonty.SurveyMonty(ACCESS_TOKEN, API_KEY)
-api.get_survey_list() # Returns a list of survey IDs
+api.get_survey_list()
 api.get_survey_details(SURVEY_ID)
 ```
 
