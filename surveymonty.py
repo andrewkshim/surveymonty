@@ -11,6 +11,9 @@ import requests
 SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
 API_VERSION = "v2"
 
+def is_survey_monkey_status_code(status_code):
+    return status_code in range(0,6)
+
 
 class SurveyMontyError(Exception):
     """
@@ -27,20 +30,20 @@ class SurveyMontyError(Exception):
         "System Error"
     ]
 
-    def __init__(self, status_code):
+    def __init__(self, status_code, message):
         """
         Args:
-            status_code: Integer ranging from 0 to 5 inclusive.
+            status_code: Integer ranging from 0 to 5 inclusive or equal to an
+                HTTP status code.
         Returns:
             Called in constructor. Implicitly returns a SurveyMontyError
             instance.
-        Raises:
-            ValueError: When status_code is out of range.
         """
-        if status_code in range(0,6):
-            self.status_code = status_code
+        self.status_code = status_code
+        if is_survey_monkey_status_code(status_code):
+            self.message = STATUS_CODE_MESSAGES[status_code]
         else:
-            raise ValueError("Status code out of range.")
+            self.message = message or "No message available."
 
     def __str__(self):
         """
@@ -49,8 +52,9 @@ class SurveyMontyError(Exception):
         """
         return "SurveyMonkey API Error {status_code}: {message}".format(
             status_code=str(self.status_code),
-            message=STATUS_CODE_MESSAGES[self.status_code]
+            message=self.message
         )
+
 
 
 class SurveyMonty(object):
@@ -105,14 +109,21 @@ class SurveyMonty(object):
             API_VERSION,
             endpoint
         ])
+        status_key = "status"
         if options is None:
             options = {}
         response = self.session.post(uri, data=json.dumps(options))
         json_response = response.json()
-        if "status" in json_response and json_response["status"] == 0:
+        if status_key in json_response and json_response[status_key] == 0:
             return json_response
         else:
-            pass
+            status_code = int(json_response[status_key])
+            message = ""
+            if not is_survey_monkey_status_code(status_code):
+                if ("error" in json_response and
+                        "message" in json_response["error"]):
+                    message = json_response["error"]["message"]
+            raise SurveyMontyError(status_code, message)
 
     # Below are the specific API methods
     # every method has a default option=None arg, may be better way to
