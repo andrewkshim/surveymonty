@@ -41,7 +41,7 @@ class SurveyMontyError(Exception):
         """
         self.status_code = status_code
         if is_survey_monkey_status_code(status_code):
-            self.message = STATUS_CODE_MESSAGES[status_code]
+            self.message = self.STATUS_CODE_MESSAGES[status_code]
         else:
             self.message = message or "No message available."
 
