@@ -50,18 +50,16 @@ class SurveyMontyError(Exception):
         Returns:
             String representation of the SurveyMontyError instance.
         """
-        return "SurveyMonkey API Error {status_code}: {message}".format(
+        return "Status code {status_code} - {message}".format(
             status_code=str(self.status_code),
             message=self.message
         )
-
 
 
 class SurveyMonty(object):
     """
     API object, call SurveyMonkey API methods on this object.
     """
-
     def __init__(self, access_token, api_key):
         """
         Initialize SurveyMonty instance with an HTTP session. Set the session
@@ -90,92 +88,162 @@ class SurveyMonty(object):
             "api_key": api_key
         }
 
+    def _create_complete_uri(self, endpoint):
+        """
+        Construct the complete URI to query the SurveyMonkey API.
+
+        Args:
+            endpoint: A string representation of the path to the API endpoint.
+
+        Returns:
+            A string representation of the complete URI to the API endpoint.
+        """
+        return "/".join([
+            SURVEY_MONKEY_HOST,
+            API_VERSION,
+            endpoint
+        ])
+
+    def _raise_exception(self, json_error_response):
+        """
+        Raise a SurveyMontyError based on the error message in the API response
+        (if it exists).
+
+        Args:
+            json_error_response: Dictionary containing the response data. This
+                method should not be called unless there is an error, so we
+                know the response should contain an error at this point.
+
+        Returns:
+            None
+
+        Raises:
+            SurveyMontyError: Always raises this error.
+        """
+        error_key = "error"
+        message_key = "message"
+        is_error_message_present = (
+            error_key in json_error_response and
+            message_key in json_error_response[error_key]
+        )
+        if is_error_message_present:
+            message = json_error_response[error_key][message_key]
+        raise SurveyMontyError(status_code, message)
+
     def _get_json_response(self, endpoint, options):
         """
         Generic method to query API, used by more specific API methods.
 
         Args:
-            endpoint: A string containing the path to the API endpoint. This
-                method constructs the full URI using this endpoint string.
+            endpoint: A string representation of the path to the API endpoint.
             options: A dictionary containing options to format the JSON
                 response. Specific option information is available for each
                 API method at https://developer.surveymonkey.com/.
 
         Returns:
-            A dictionary representative of the JSON response.
+            A dictionary representation of the JSON response.
         """
-        uri = "/".join([
-            SURVEY_MONKEY_HOST,
-            API_VERSION,
-            endpoint
-        ])
+        uri = self._create_complete_uri(endpoint)
         status_key = "status"
         if options is None:
             options = {}
         response = self.session.post(uri, data=json.dumps(options))
         json_response = response.json()
-        if status_key in json_response and json_response[status_key] == 0:
+        is_json_valid = (status_key in json_response and
+                         json_response[status_key] == 0)
+        if is_json_valid:
             return json_response
         else:
             status_code = int(json_response[status_key])
             message = ""
             if not is_survey_monkey_status_code(status_code):
-                if ("error" in json_response and
-                        "message" in json_response["error"]):
-                    message = json_response["error"]["message"]
-            raise SurveyMontyError(status_code, message)
+                self._raise_exception()
 
-    # Below are the specific API methods
-    # every method has a default option=None arg, may be better way to
-    # tease out this requirement to avoid repetition
     def get_survey_list(self, options=None):
-        """Return surveys in JSON format"""
-        endpoint = "surveys/get_survey_lis"
+        """
+        API method to get list of all surveys pertaining to user access token.
+        https://developer.surveymonkey.com/mashery/get_survey_list
+
+        Args:
+            options: Optional dictionary to be sent as request data. Options
+                for this particular methods can be found at respective link.
+
+        Returns:
+            Dictionary containing the survey list information.
+        """
+        endpoint = "surveys/get_survey_list"
         json_response = self._get_json_response(endpoint, options)
         survey_list = []
-        if (json_response["data"] and json_response["data"]["surveys"]):
-            survey_list = json_response["data"]["surveys"]
+        if json_response["data"]:
+            survey_list = json_response["data"]
         else:
-            print("No surveys available")
+            print("No surveys available.")
         return survey_list
 
     def get_survey_details(self, survey_id, options=None):
-        """Return survey information in JSON format"""
+        """
+        API method to get details for a single survey.
+        https://developer.surveymonkey.com/mashery/get_survey_details
+
+        Args:
+            survey_id: String representation of a survey ID number. Survey IDs
+                can be obtained from get_survey_list().
+            options: Same as get_survey_list().
+
+        Returns:
+            Dictionary containing the survey object.
+        """
         endpoint = "surveys/get_survey_details"
-        json_response = {}
         survey = {}
         if survey_id:
-            if options is None:
-                options = {}
+            options = options or {}
             options["survey_id"] = survey_id
             json_response = self._get_json_response(endpoint, options)
-        if json_response["data"]:
-            survey = json_response["data"]
-        else:
-            print("Survey {id} could not be found.").format(survey_id)
+            if json_response["data"]:
+                survey = json_response["data"]
+            else:
+                print("Survey {id} could not be found.").format(survey_id)
         return survey
 
     def get_collector_list(self, survey_id, options=None):
+        """
+        API method to get list of collectors for a survey. A collector is an
+        instance of a survey and is what the survey-takers interact with.
+        https://developer.surveymonkey.com/mashery/get_collector_list
+
+        Args:
+            Same as get_survey_details().
+
+        Returns:
+            Dictionary containing the collector information.
+        """
         endpoint = "surveys/get_collector_list"
-        json_response = {}
         collector_list = {}
         if survey_id:
-            if options is None:
-                options = {}
+            options = options or {}
             options["survey_id"] = survey_id
             json_response = self._get_json_response(endpoint, options)
-        if json_response["data"]:
-            collector_list = json_response["data"]
-        else:
-            print("Collectors for survey {id} not found.").format(survey_id)
+            if json_response["data"]:
+                collector_list = json_response["data"]
+            else:
+                print("Collectors for survey {id} not found.").format(survey_id)
         return collector_list
 
     def get_respondent_list(self, survey_id, options=None):
+        """
+        API method to get list of respondents for a survey.
+        https://developer.surveymonkey.com/mashery/get_respondent_list
+
+        Args:
+            Same as get_survey_details().
+
+        Returns:
+            Dictionary containing the respondent information.
+        """
         endpoint = "surveys/get_respondent_list"
         respondent_list = {}
         if survey_id:
-            if options is None:
-                options = {}
+            options = options or {}
             options["survey_id"] = survey_id
             json_response = self._get_json_response(endpoint, options)
         if json_response["data"]:
@@ -184,40 +252,70 @@ class SurveyMonty(object):
             print("Respondents for survey {id} not found.").format(survey_id)
         return respondent_list
 
-    # RESPONDENT_IDS have to be strings
-    def get_reponses(self, respondent_ids, survey_id, options=None):
+    def get_responses(self, respondent_ids, survey_id, options=None):
+        """
+        API method to get list of responses from respondents of a survey.
+        https://developer.surveymonkey.com/mashery/get_responses
+
+        Args:
+            respondent_ids: List of respondent ID strings. Respondent IDs can
+                be obtained from get_respondent_list().
+            survey_id: String representation of a survey ID number. Survey IDs
+                can be obtained from get_survey_list().
+            options: Same as other API methods.
+
+        Returns:
+            Dictionary containing the response information.
+        """
         endpoint = "surveys/get_responses"
         response_list = {}
         if respondent_ids and survey_id:
-            if options is None:
-                options = {}
+            options = options or {}
             options["respondent_ids"] = respondent_ids
             options["survey_id"] = survey_id
             json_response = self._get_json_response(endpoint, options)
-        print json_response
-        if json_response["data"]:
-            response_list = json_response["data"]
-        else:
-            print("Responses for survey {id} not found.").format(survey_id)
+            if json_response["data"]:
+                response_list = json_response["data"]
+            else:
+                print("Responses for survey {id} not found.").format(survey_id)
         return response_list
 
     def get_response_count(self, collector_id, options=None):
+        """
+        API method to get count of reponses for a collector.
+        https://developer.surveymonkey.com/mashery/get_responses
+
+        Args:
+            collector_id: String representation of collector ID number.
+                Collector IDs can be obtained from get_collector_list().
+            options: Same as other API methods.
+
+        Returns:
+            Dictionary containing the counts of the response types.
+        """
         endpoint = "surveys/get_response_counts"
         response_count = 0
         if collector_id:
-            if options is None:
-                options = {}
+            options = options or {}
             options["collector_id"] = collector_id
             json_response = self._get_json_response(endpoint, options)
-        if json_response["data"]:
-            response_count = json_response["data"]
+            if json_response["data"]:
+                response_count = json_response["data"]
         return response_count
 
     def get_user_details(self, options=None):
+        """
+        API method to get details on the user pertaining to the access token.
+        https://developer.surveymonkey.com/mashery/get_user_details
+
+        Args:
+            options: Same as other API methods.
+
+        Returns:
+            Dictionary containing the user information.
+        """
         endpoint = "user/get_user_details"
         user_details = {}
-        if options is None:
-            options = {}
         json_response = self._get_json_response(endpoint, options)
         if json_response["data"]:
             user_details = json_response["data"]
