@@ -7,8 +7,9 @@ is a wrapper in Python, and Python makes me think of [Monty Python][1]. Also,
 [1]:http://en.wikipedia.org/wiki/Monty_Python
 
 # Installation
-Simply copy [surveymonty.py](./surveymonty.py) to the directory of the calling
-Python file.
+```bash
+$ pip install SurveyMonty
+```
 
 # Example
 This wrapper is very lightweight and provides no object encapsulation of the
@@ -17,7 +18,7 @@ you can obtain the JSON responses and do with them as you please.
 
 Sample Python script using SurveyMonty:
 ```python
-import surveymonty
+from SurveyMonty import surveymonty
 
 ACCESS_TOKEN = "YOUR_ACCESS_TOKEN" # A very long string of characters
 API_KEY = "YOUR_API_KEY" # A not-as-long string of alphanumeric characters
