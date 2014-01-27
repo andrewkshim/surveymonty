@@ -37,9 +37,6 @@ api.get_survey_details(SURVEY_ID)
 - get\_response\_count()
 - get\_user\_details()
 
-## TODO
-- Make available through `pip`
-
 # License
 This content is released under the [MIT License](./LICENSE.md).
 
