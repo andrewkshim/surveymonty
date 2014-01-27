@@ -38,3 +38,7 @@ api.get_survey_details(SURVEY_ID)
 
 ## TODO
 - Make available through `pip`
+
+# License
+This content is provided under the [MIT License](./LICENSE.md)
+
