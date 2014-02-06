@@ -177,6 +177,9 @@ class Client(object):
         status_key = "status"
         if options is None:
             options = {}
+        else:
+          for key in options:
+            options[key] = str(options[key])
         response = self.session.post(uri, data=json.dumps(options))
         json_response = response.json()
         is_json_okay = (
@@ -227,7 +230,7 @@ class Client(object):
         survey = {}
         if survey_id:
             options = options or {}
-            options["survey_id"] = str(survey_id)
+            options["survey_id"] = survey_id
             json_response = self._get_json_response(endpoint, options)
             print json_response
             if self._is_json_response_valid(json_response):
