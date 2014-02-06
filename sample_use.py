@@ -9,7 +9,7 @@ import surveymonty
 
 def main():
   api = surveymonty.Client()
-  print api.get_survey_list()
+  print api.get_survey_details(48642975)
 
 if __name__ == "__main__":
   main()
