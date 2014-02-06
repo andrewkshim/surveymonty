@@ -1,0 +1,3 @@
+0.1.1
+=====
+Moved ACCESS_TOKEN and API_KEY access to environment variables.
