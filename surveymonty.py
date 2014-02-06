@@ -56,7 +56,7 @@ class SurveyMontyError(Exception):
         )
 
 
-class SurveyMonty(object):
+class Client(object):
     """
     API object, call SurveyMonkey API methods on this object.
     """
