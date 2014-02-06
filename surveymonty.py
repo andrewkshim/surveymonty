@@ -214,7 +214,7 @@ class Client(object):
             options = options or {}
             options["survey_id"] = survey_id
             json_response = self._get_json_response(endpoint, options)
-            if json_response["data"]:
+            if "data" in json_response:
                 survey = json_response["data"]
             else:
                 print("Survey {id} could not be found.").format(survey_id)
