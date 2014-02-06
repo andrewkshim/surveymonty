@@ -177,9 +177,6 @@ class Client(object):
         status_key = "status"
         if options is None:
             options = {}
-        else:
-          for key in options:
-            options[key] = str(options[key])
         response = self.session.post(uri, data=json.dumps(options))
         json_response = response.json()
         is_json_okay = (
@@ -230,7 +227,7 @@ class Client(object):
         survey = {}
         if survey_id:
             options = options or {}
-            options["survey_id"] = survey_id
+            options["survey_id"] = str(survey_id)
             json_response = self._get_json_response(endpoint, options)
             print json_response
             if self._is_json_response_valid(json_response):
@@ -255,7 +252,7 @@ class Client(object):
         collector_list = {}
         if survey_id:
             options = options or {}
-            options["survey_id"] = survey_id
+            options["survey_id"] = str(survey_id)
             json_response = self._get_json_response(endpoint, options)
             if self._is_json_response_valid(json_response):
                 collector_list = json_response["data"]
@@ -278,7 +275,7 @@ class Client(object):
         respondent_list = {}
         if survey_id:
             options = options or {}
-            options["survey_id"] = survey_id
+            options["survey_id"] = str(survey_id)
             json_response = self._get_json_response(endpoint, options)
         if self._is_json_response_valid(json_response):
             respondent_list = json_response["data"]
@@ -305,8 +302,9 @@ class Client(object):
         response_list = {}
         if respondent_ids and survey_id:
             options = options or {}
-            options["respondent_ids"] = respondent_ids
-            options["survey_id"] = survey_id
+            options["respondent_ids"] = [str(respondent_id) for respondent_id
+                in respondent_ids]
+            options["survey_id"] = str(survey_id)
             json_response = self._get_json_response(endpoint, options)
             if self._is_json_response_valid(json_response):
                 response_list = json_response["data"]
@@ -331,7 +329,7 @@ class Client(object):
         response_count = 0
         if collector_id:
             options = options or {}
-            options["collector_id"] = collector_id
+            options["collector_id"] = str(collector_id)
             json_response = self._get_json_response(endpoint, options)
             if self._is_json_response_valid(json_response):
                 response_count = json_response["data"]
