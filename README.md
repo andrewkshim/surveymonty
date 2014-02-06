@@ -16,16 +16,21 @@ This wrapper is very lightweight and provides no object encapsulation of the
 responses. Rather, it provides the API methods in Python form, through which
 you can obtain the JSON responses and do with them as you please.
 
+Note, the API requires an access token and api key. For security, this wrapper
+will only accept these values through the environment variables. Before using
+the wrapper, make sure to set them:
+```bash
+export SURVEY_MONKEY_ACCESS_TOKEN="YOUR_ACCESS_TOKEN"
+export SURVEY_MONKEY_API_KEY="YOUR_API_KEY"
+```
+
 Sample Python script using SurveyMonty:
 ```python
 import surveymonty
 
-ACCESS_TOKEN = "YOUR_ACCESS_TOKEN" # A very long string of characters
-API_KEY = "YOUR_API_KEY" # A not-as-long string of alphanumeric characters
-
-api = surveymonty.Client(ACCESS_TOKEN, API_KEY)
-api.get_survey_list()
-api.get_survey_details(SURVEY_ID)
+api = surveymonty.Client()
+api.get_survey_list() # retrieve survey ids
+api.get_survey_details(SURVEY_ID) # use a SURVEY_ID from above
 ```
 
 ## Available API Methods

@@ -6,6 +6,7 @@ Python wrapper for SurveyMonkey API: https://developer.surveymonkey.com/
 """
 
 import json
+import os
 import requests
 
 SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
@@ -14,10 +15,12 @@ API_VERSION = "v2"
 def is_survey_monkey_status_code(status_code):
     return status_code in range(0,6)
 
-
 class SurveyMontyError(Exception):
+  pass
+
+class SurveyMontyAPIError(Exception):
     """
-    Custom SurveyMonkey Exception. Uses status code messages provided at:
+    Custom SurveyMonkey API Exception. Uses status code messages provided at:
     https://developer.surveymonkey.com/mashery/requests_responses
     """
     # Status codes correspond to indicies.
@@ -36,7 +39,7 @@ class SurveyMontyError(Exception):
             status_code: Integer ranging from 0 to 5 inclusive or equal to an
                 HTTP status code.
         Returns:
-            Called in constructor. Implicitly returns a SurveyMontyError
+            Called in constructor. Implicitly returns a SurveyMontyAPIError
             instance.
         """
         self.status_code = status_code
@@ -48,7 +51,7 @@ class SurveyMontyError(Exception):
     def __str__(self):
         """
         Returns:
-            String representation of the SurveyMontyError instance.
+            String representation of the SurveyMontyAPIError instance.
         """
         return "Status code {status_code} - {message}".format(
             status_code=str(self.status_code),
@@ -60,33 +63,45 @@ class Client(object):
     """
     API object, call SurveyMonkey API methods on this object.
     """
-    def __init__(self, access_token, api_key):
+    ACCESS_TOKEN_NAME = "SURVEY_MONTY_ACCESS_TOKEN"
+    API_KEY_NAME = "SURVEY_MONTY_API_KEY"
+
+    def __init__(self):
         """
         Initialize SurveyMonty instance with an HTTP session. Set the session
         header to contain the access token, and the session params to contain
         the API key. Subsequent calls to the API will be done through the
         instance's session.
 
-        Args:
-            access_token: A long alphanumeric string. Tied to a specific
-                SurveyMonkey user account, and the owner of the account must
-                authorize you (the developer) to access their token.
-            api_key: An alphanumeric string (shorter than access_token).
-                Specific to your developer account and can be viewed in your
-                profile.
+        Access token and api key must be set in environment variables.
 
         Returns:
             Called in constructor, so you can say this method returns a
             SurveyMonty instance.
+
+        Raises:
+            SurveyMontyError if access token and api key are not available.
         """
-        self.session = requests.session()
-        self.session.headers = {
-            "Authorization": "bearer %s" % access_token,
-            "Content-Type": "application/json"
-        }
-        self.session.params = {
-            "api_key": api_key
-        }
+        is_access_token_present = self.ACCESS_TOKEN_NAME in os.environ
+        is_api_key_present = self.API_KEY_NAME in os.environ
+        if is_access_token_present and is_api_key_present:
+          access_token = os.environ[self.ACCESS_TOKEN_NAME]
+          api_key = os.environ[self.API_KEY_NAME]
+          self.session = requests.session()
+          self.session.headers = {
+              "Authorization": "bearer %s" % access_token,
+              "Content-Type": "application/json"
+          }
+          self.session.params = {
+              "api_key": api_key
+          }
+        else:
+          raise SurveyMontyError(
+              "Missing {access_token} and {api_key} in environment.".format(
+                access_token=self.ACCESS_TOKEN_NAME,
+                api_key=self.API_KEY_NAME
+              )
+          )
 
     def _create_complete_uri(self, endpoint):
         """
@@ -106,7 +121,7 @@ class Client(object):
 
     def _raise_exception(self, json_error_response):
         """
-        Raise a SurveyMontyError based on the error message in the API response
+        Raise a SurveyMontyAPIError based on the error message in the API response
         (if it exists).
 
         Args:
@@ -118,7 +133,7 @@ class Client(object):
             None
 
         Raises:
-            SurveyMontyError: Always raises this error.
+            SurveyMontyAPIError: Always raises this error.
         """
         error_key = "error"
         message_key = "message"
@@ -128,7 +143,7 @@ class Client(object):
         )
         if is_error_message_present:
             message = json_error_response[error_key][message_key]
-        raise SurveyMontyError(status_code, message)
+        raise SurveyMontyAPIError(status_code, message)
 
     def _get_json_response(self, endpoint, options):
         """
