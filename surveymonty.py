@@ -24,7 +24,7 @@ class SurveyMontyAPIError(Exception):
     https://developer.surveymonkey.com/mashery/requests_responses
     """
     # Status codes correspond to indicies.
-    STATUS_CODE_MESSAGES = [
+    STATUS_CODE_CATEGORIES = [
         "Success",
         "Not Authenticated",
         "Invalid User Credentials",
@@ -44,17 +44,17 @@ class SurveyMontyAPIError(Exception):
         """
         self.status_code = status_code
         if is_survey_monkey_status_code(status_code):
-            self.message = self.STATUS_CODE_MESSAGES[status_code]
-        else:
-            self.message = message or "No message available."
+            self.category = self.STATUS_CODE_CATEGORIES[status_code]
+        self.message = message or "No message available."
 
     def __str__(self):
         """
         Returns:
             String representation of the SurveyMontyAPIError instance.
         """
-        return "Status code {status_code} - {message}".format(
+        return "Status code {status_code} {category} - {message}".format(
             status_code=str(self.status_code),
+            category=self.category,
             message=self.message
         )
 
@@ -103,6 +103,18 @@ class Client(object):
               )
           )
 
+    def _is_json_response_valid(self, json_response):
+        """
+        Check if JSON response is valid.
+
+        Args:
+            json_response: Dictionary representation of JSON.
+
+        Returns:
+            Boolean. True if valid, else False.
+        """
+        return "data" in json_response
+
     def _create_complete_uri(self, endpoint):
         """
         Construct the complete URI to query the SurveyMonkey API.
@@ -119,13 +131,13 @@ class Client(object):
             endpoint
         ])
 
-    def _raise_exception(self, json_error_response):
+    def _raise_exception(self, json_response):
         """
         Raise a SurveyMontyAPIError based on the error message in the API response
         (if it exists).
 
         Args:
-            json_error_response: Dictionary containing the response data. This
+            json_response: Dictionary containing the response data. This
                 method should not be called unless there is an error, so we
                 know the response should contain an error at this point.
 
@@ -133,17 +145,20 @@ class Client(object):
             None
 
         Raises:
-            SurveyMontyAPIError: Always raises this error.
+            SurveyMontyAPIError: If JSON response contains appropriate info.
+            SurveyMontyError: If cannot find info in response.
         """
-        error_key = "error"
-        message_key = "message"
-        is_error_message_present = (
-            error_key in json_error_response and
-            message_key in json_error_response[error_key]
-        )
-        if is_error_message_present:
-            message = json_error_response[error_key][message_key]
-        raise SurveyMontyAPIError(status_code, message)
+
+        message_key = "errmsg"
+        status_key = "status"
+        if status_key in json_response:
+            status_code = int(json_response[status_key])
+            if (is_survey_monkey_status_code(status_code) and
+                    message_key in json_response):
+                message = json_response[message_key]
+                raise SurveyMontyAPIError(status_code, message)
+        else:
+            raise SurveyMontyError("Unknown error with API.")
 
     def _get_json_response(self, endpoint, options):
         """
@@ -164,15 +179,15 @@ class Client(object):
             options = {}
         response = self.session.post(uri, data=json.dumps(options))
         json_response = response.json()
-        is_json_valid = (status_key in json_response and
-                         json_response[status_key] == 0)
-        if is_json_valid:
+        is_json_okay = (
+            json_response and
+            status_key in json_response and
+            json_response[status_key] == 0
+        )
+        if is_json_okay:
             return json_response
         else:
-            status_code = int(json_response[status_key])
-            message = ""
-            if not is_survey_monkey_status_code(status_code):
-                self._raise_exception()
+            self._raise_exception(json_response)
 
     def get_survey_list(self, options=None):
         """
@@ -189,7 +204,7 @@ class Client(object):
         endpoint = "surveys/get_survey_list"
         json_response = self._get_json_response(endpoint, options)
         survey_list = []
-        if json_response["data"]:
+        if self._is_json_response_valid(json_response):
             survey_list = json_response["data"]
         else:
             print("No surveys available.")
@@ -212,9 +227,10 @@ class Client(object):
         survey = {}
         if survey_id:
             options = options or {}
-            options["survey_id"] = survey_id
+            options["survey_id"] = str(survey_id)
             json_response = self._get_json_response(endpoint, options)
-            if "data" in json_response:
+            print json_response
+            if self._is_json_response_valid(json_response):
                 survey = json_response["data"]
             else:
                 print("Survey {id} could not be found.").format(survey_id)
@@ -238,7 +254,7 @@ class Client(object):
             options = options or {}
             options["survey_id"] = survey_id
             json_response = self._get_json_response(endpoint, options)
-            if json_response["data"]:
+            if self._is_json_response_valid(json_response):
                 collector_list = json_response["data"]
             else:
                 print("Collectors for survey {id} not found.").format(survey_id)
@@ -261,7 +277,7 @@ class Client(object):
             options = options or {}
             options["survey_id"] = survey_id
             json_response = self._get_json_response(endpoint, options)
-        if json_response["data"]:
+        if self._is_json_response_valid(json_response):
             respondent_list = json_response["data"]
         else:
             print("Respondents for survey {id} not found.").format(survey_id)
@@ -289,7 +305,7 @@ class Client(object):
             options["respondent_ids"] = respondent_ids
             options["survey_id"] = survey_id
             json_response = self._get_json_response(endpoint, options)
-            if json_response["data"]:
+            if self._is_json_response_valid(json_response):
                 response_list = json_response["data"]
             else:
                 print("Responses for survey {id} not found.").format(survey_id)
@@ -314,7 +330,7 @@ class Client(object):
             options = options or {}
             options["collector_id"] = collector_id
             json_response = self._get_json_response(endpoint, options)
-            if json_response["data"]:
+            if self._is_json_response_valid(json_response):
                 response_count = json_response["data"]
         return response_count
 
@@ -332,7 +348,7 @@ class Client(object):
         endpoint = "user/get_user_details"
         user_details = {}
         json_response = self._get_json_response(endpoint, options)
-        if json_response["data"]:
+        if self._is_json_response_valid(json_response):
             user_details = json_response["data"]
         return user_details
 
