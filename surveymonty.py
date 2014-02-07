@@ -229,7 +229,6 @@ class Client(object):
             options = options or {}
             options["survey_id"] = str(survey_id)
             json_response = self._get_json_response(endpoint, options)
-            print json_response
             if self._is_json_response_valid(json_response):
                 survey = json_response["data"]
             else:
