@@ -58,3 +58,5 @@ docs/_build/
 
 # PyPI
 .pypirc
+
+test_surveymonty.py

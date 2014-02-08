@@ -1,3 +1,11 @@
+0.1.9
+=====
+Fix.
+
+0.1.8
+=====
+Reattempt failed queries.
+
 0.1.7
 =====
 Remove print statement.
