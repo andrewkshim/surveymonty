@@ -8,6 +8,7 @@ Python wrapper for SurveyMonkey API: https://developer.surveymonkey.com/
 import json
 import os
 import requests
+import time
 
 SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
 API_VERSION = "v2"
@@ -32,6 +33,7 @@ class SurveyMontyAPIError(Exception):
         "Unknown User",
         "System Error"
     ]
+    MAX_QUERY_ATTEMPTS = 5 # number of times to ping API until giving up
 
     def __init__(self, status_code, message):
         """
@@ -202,7 +204,13 @@ class Client(object):
         if options is None:
             options = {}
         response = self.session.post(uri, data=json.dumps(options))
-        json_response = response.json()
+        json_response = None
+        for i in range(0, MAX_QUERY_ATTEMPTS):
+            try:
+                json_response = response.json()
+            except ValueError as e:
+                time.sleep(1) # may have hit per second query limit
+                continue
         is_json_okay = (
             json_response and
             status_key in json_response and
