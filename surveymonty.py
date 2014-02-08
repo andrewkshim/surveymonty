@@ -66,14 +66,18 @@ class Client(object):
     ACCESS_TOKEN_NAME = "SURVEY_MONTY_ACCESS_TOKEN"
     API_KEY_NAME = "SURVEY_MONTY_API_KEY"
 
-    def __init__(self):
+    def __init__(self, access_token=None, api_key=None):
         """
-        Initialize SurveyMonty instance with an HTTP session. Set the session
-        header to contain the access token, and the session params to contain
-        the API key. Subsequent calls to the API will be done through the
-        instance's session.
+        Access token and api key must be passed in or set in environment
+        variables.
 
-        Access token and api key must be set in environment variables.
+        Arguments:
+            access_token: A long alphanumeric string. Tied to a specific
+                SurveyMonkey user account, and the owner of the account must
+                authorize you (the developer) to access their token.
+            api_key: An alphanumeric string (shorter than access_token).
+                Specific to your developer account and can be viewed in your
+                profile.
 
         Returns:
             Called in constructor, so you can say this method returns a
@@ -82,26 +86,46 @@ class Client(object):
         Raises:
             SurveyMontyError if access token and api key are not available.
         """
-        is_access_token_present = self.ACCESS_TOKEN_NAME in os.environ
-        is_api_key_present = self.API_KEY_NAME in os.environ
-        if is_access_token_present and is_api_key_present:
-          access_token = os.environ[self.ACCESS_TOKEN_NAME]
-          api_key = os.environ[self.API_KEY_NAME]
-          self.session = requests.session()
-          self.session.headers = {
-              "Authorization": "bearer %s" % access_token,
-              "Content-Type": "application/json"
-          }
-          self.session.params = {
-              "api_key": api_key
-          }
+        if access_token and api_key:
+            self._create_session(access_token, api_key)
         else:
-          raise SurveyMontyError(
-              "Missing {access_token} and {api_key} in environment.".format(
-                access_token=self.ACCESS_TOKEN_NAME,
-                api_key=self.API_KEY_NAME
-              )
-          )
+            is_access_token_present = self.ACCESS_TOKEN_NAME in os.environ
+            is_api_key_present = self.API_KEY_NAME in os.environ
+            if is_access_token_present and is_api_key_present:
+                access_token = os.environ[self.ACCESS_TOKEN_NAME]
+                api_key = os.environ[self.API_KEY_NAME]
+                self._create_session(access_token, api_key)
+            else:
+                raise SurveyMontyError(
+                    "Missing {access_token} and {api_key} in env.".format(
+                        access_token=self.ACCESS_TOKEN_NAME,
+                        api_key=self.API_KEY_NAME
+                    )
+                )
+
+    def _create_session(self, access_token, api_key):
+        """
+        Create HTTP session for API communication. Set the session
+        header to contain the access token, and the session params to contain
+        the API key. Subsequent calls to the API will be done through the
+        instance's session.
+
+        Arguments:
+            access_token: A long alphanumeric string. Tied to a specific
+                SurveyMonkey user account, and the owner of the account must
+                authorize you (the developer) to access their token.
+            api_key: An alphanumeric string (shorter than access_token).
+                Specific to your developer account and can be viewed in your
+                profile.
+        """
+        self.session = requests.session()
+        self.session.headers = {
+            "Authorization": "bearer %s" % access_token,
+            "Content-Type": "application/json"
+        }
+        self.session.params = {
+            "api_key": api_key
+        }
 
     def _is_json_response_valid(self, json_response):
         """
