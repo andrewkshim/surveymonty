@@ -59,3 +59,33 @@ api.get_survey_details(SURVEY_ID) # use a SURVEY_ID from above
 # License
 This content is released under the [MIT License](./LICENSE.md).
 
+# Changes
+## 0.1.10
+Use wheel.
+
+### 0.1.9
+Fix.
+
+### 0.1.8
+Reattempt failed queries.
+
+### 0.1.7
+Remove print statement.
+
+### 0.1.6
+Bug fix.
+
+### 0.1.5
+Bug fix.
+
+### 0.1.4
+Input accepts numbers for IDs.
+
+### 0.1.3
+Made error handling more robust.
+
+### 0.1.2
+Bug fix.
+
+### 0.1.1
+Moved ACCESS\_TOKEN and API\_KEY access to environment variables.
