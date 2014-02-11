@@ -89,3 +89,4 @@ Bug fix.
 
 ### 0.1.1
 Moved ACCESS\_TOKEN and API\_KEY access to environment variables.
+
