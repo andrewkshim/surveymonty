@@ -35,7 +35,6 @@ api.get_survey_details(SURVEY_ID) # use a SURVEY_ID from above
 ```
 
 ### Setting credentials in code
-Sample Python script using SurveyMonty:
 ```python
 import surveymonty
 
@@ -43,8 +42,8 @@ ACCESS_TOKEN = "YOUR_ACCESS_TOKEN"
 API_KEY = "YOUR_API_KEY"
 
 api = surveymonty.Client(ACCESS_TOKEN, API_KEY)
-api.get_survey_list() # retrieve survey ids
-api.get_survey_details(SURVEY_ID) # use a SURVEY_ID from above
+api.get_survey_list()
+api.get_survey_details(SURVEY_ID)
 ```
 
 ## Available API Methods
@@ -60,7 +59,7 @@ api.get_survey_details(SURVEY_ID) # use a SURVEY_ID from above
 This content is released under the [MIT License](./LICENSE.md).
 
 # Changes
-## 0.1.10
+### 0.1.10
 Use wheel.
 
 ### 0.1.9
