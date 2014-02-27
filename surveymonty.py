@@ -13,11 +13,14 @@ import time
 SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
 API_VERSION = "v2"
 
+
 def is_survey_monkey_status_code(status_code):
-    return status_code in range(0,6)
+    return status_code in range(0, 6)
+
 
 class SurveyMontyError(Exception):
   pass
+
 
 class SurveyMontyAPIError(Exception):
     """
@@ -66,7 +69,7 @@ class Client(object):
     """
     ACCESS_TOKEN_NAME = "SURVEY_MONTY_ACCESS_TOKEN"
     API_KEY_NAME = "SURVEY_MONTY_API_KEY"
-    MAX_QUERY_ATTEMPTS = 5 # number of times to ping API until giving up
+    MAX_QUERY_ATTEMPTS = 5  # number of times to ping API until giving up
 
     def __init__(self, access_token=None, api_key=None):
         """
@@ -159,8 +162,8 @@ class Client(object):
 
     def _raise_exception(self, json_response):
         """
-        Raise a SurveyMontyAPIError based on the error message in the API response
-        (if it exists).
+        Raise a SurveyMontyAPIError based on the error message in the API
+        response (if it exists).
 
         Args:
             json_response: Dictionary containing the response data. This
@@ -208,8 +211,8 @@ class Client(object):
         for i in range(0, self.MAX_QUERY_ATTEMPTS):
             try:
                 json_response = response.json()
-            except ValueError as e:
-                time.sleep(1) # may have hit per second query limit
+            except ValueError:
+                time.sleep(1)  # may have hit per second query limit
                 response = self.session.post(uri, data=json.dumps(options))
         is_json_okay = (
             json_response and
@@ -288,7 +291,9 @@ class Client(object):
             if self._is_json_response_valid(json_response):
                 collector_list = json_response["data"]
             else:
-                print("Collectors for survey {id} not found.").format(survey_id)
+                print("Collectors for survey {id} not found.").format(
+                    survey_id
+                )
         return collector_list
 
     def get_respondent_list(self, survey_id, options=None):
@@ -319,6 +324,10 @@ class Client(object):
         API method to get list of responses from respondents of a survey.
         https://developer.surveymonkey.com/mashery/get_responses
 
+        SurveyMonkey limits the number of responses per request to 100, so this
+        method returns the first 100 responses. If you want to get the rest of
+        the responses, use the get_all_responses() method.
+
         Args:
             respondent_ids: List of respondent ID strings. Respondent IDs can
                 be obtained from get_respondent_list().
@@ -334,7 +343,7 @@ class Client(object):
         if respondent_ids and survey_id:
             options = options or {}
             options["respondent_ids"] = [str(respondent_id) for respondent_id
-                in respondent_ids]
+                                         in respondent_ids]
             options["survey_id"] = str(survey_id)
             json_response = self._get_json_response(endpoint, options)
             if self._is_json_response_valid(json_response):
@@ -383,4 +392,3 @@ class Client(object):
         if self._is_json_response_valid(json_response):
             user_details = json_response["data"]
         return user_details
-
