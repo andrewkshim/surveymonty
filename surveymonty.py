@@ -6,6 +6,7 @@ Python wrapper for SurveyMonkey API: https://developer.surveymonkey.com/
 """
 
 import json
+import math
 import os
 import requests
 import time
@@ -70,6 +71,7 @@ class Client(object):
     ACCESS_TOKEN_NAME = "SURVEY_MONTY_ACCESS_TOKEN"
     API_KEY_NAME = "SURVEY_MONTY_API_KEY"
     MAX_QUERY_ATTEMPTS = 5  # number of times to ping API until giving up
+    NUM_RESPONSES_PER_CALL = 100
 
     def __init__(self, access_token=None, api_key=None):
         """
@@ -319,14 +321,44 @@ class Client(object):
             print("Respondents for survey {id} not found.").format(survey_id)
         return respondent_list
 
-    def get_responses(self, respondent_ids, survey_id, options=None):
+    def _get_page_boundary_indicies(self, page_index, page_size, limit):
+      """
+      Convenience method to get the start and end indicies that will be used
+      within an interable to get the elements for the corresponding page_index.
+      For example, if a list has 200 elements and the page_size is 100, then
+      that array has two pages. The first page has start_index 0 and end_index
+      100 and corresponds to the first 100 elements. The second page has 100
+      and 200 as its inidices and corresponds to the second 100 elements.
+
+      Args:
+          page_index: Integer index of page.
+          page_size: Size of each page.
+          limit: The maximum number of elements in the iterable.
+
+      Returns:
+          Tuple (integer, integer) corresponding to (start_index, end_index) of
+          the page for the given page_index.
+      """
+      start_index = page_index * page_size
+      if start_index > limit:
+          raise SurveyMontyError("Page_index out of bounds.")
+      end_index = start_index + page_size
+      if end_index > limit:
+          end_index = limit
+      return start_index, end_index
+
+    def get_responses(
+        self, respondent_ids, survey_id,
+        options=None, page_index=0
+    ):
         """
         API method to get list of responses from respondents of a survey.
         https://developer.surveymonkey.com/mashery/get_responses
 
         SurveyMonkey limits the number of responses per request to 100, so this
-        method returns the first 100 responses. If you want to get the rest of
-        the responses, use the get_all_responses() method.
+        method returns the 100 responses that correspond to the page_index.
+        If you want to get all of the responses, use the get_all_responses()
+        convenience method.
 
         Args:
             respondent_ids: List of respondent ID strings. Respondent IDs can
@@ -334,6 +366,8 @@ class Client(object):
             survey_id: String representation of a survey ID number. Survey IDs
                 can be obtained from get_survey_list().
             options: Same as other API methods.
+            page_index: Integer index of results page. Index 0 corresponds to
+                the first 100 responses, index 1 to the next 100, and so on.
 
         Returns:
             Dictionary containing the response information.
@@ -342,8 +376,15 @@ class Client(object):
         response_list = {}
         if respondent_ids and survey_id:
             options = options or {}
-            options["respondent_ids"] = [str(respondent_id) for respondent_id
-                                         in respondent_ids]
+            start_index, end_index = self._get_page_boundary_indicies(
+                page_index,
+                self.NUM_RESPONSES_PER_CALL,
+                len(respondent_ids)
+            )
+            options["respondent_ids"] = [
+                str(respondent_id) for respondent_id
+                in respondent_ids[start_index: end_index]
+            ]
             options["survey_id"] = str(survey_id)
             json_response = self._get_json_response(endpoint, options)
             if self._is_json_response_valid(json_response):
@@ -351,6 +392,35 @@ class Client(object):
             else:
                 print("Responses for survey {id} not found.").format(survey_id)
         return response_list
+
+    def get_all_responses(self, respondent_ids, survey_id, options=None):
+        """
+        Convenience method for getting all responses from a survey. Otherwise,
+        provides same functionality as get_reponses().
+
+        Args:
+            respondent_ids: List of respondent ID strings. Respondent IDs can
+                be obtained from get_respondent_list().
+            survey_id: String representation of a survey ID number. Survey IDs
+                can be obtained from get_survey_list().
+            options: Same as other API methods.
+            page_index: Integer index of results page. Index 0 corresponds to
+                the first 100 responses, index 1 to the next 100, and so on.
+
+        Returns:
+            Dictionary containing the response information.
+        """
+        num_pages = int(math.ceil(
+            len(respondent_ids) / self.NUM_RESPONSES_PER_CALL
+        ))
+        all_reponses = {}
+        for page_index in range(0, num_pages):
+          next_reponses = self.get_responses(
+              respondent_ids, survey_id,
+              options, page_index
+          )
+          all_reponses.update(next_reponses)
+        return all_reponses
 
     def get_response_count(self, collector_id, options=None):
         """
