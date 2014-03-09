@@ -14,7 +14,7 @@ import time
 SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
 API_VERSION = "v2"
 
-__version__ = "0.1.15"
+__version__ = "0.1.16"
 
 
 def is_survey_monkey_status_code(status_code):
@@ -415,12 +415,12 @@ class Client(object):
         num_pages = int(math.ceil(
             len(respondent_ids) / float(self.NUM_RESPONSES_PER_CALL)
         ))
-        all_reponses = {}
+        all_reponses = []
         for page_index in range(0, num_pages):
-          next_reponses = self.get_responses(
+          next_responses = self.get_responses(
             survey_id, respondent_ids, options, page_index
           )
-          all_reponses.update(next_reponses)
+          all_reponses += next_responses
         return all_reponses
 
     def get_response_count(self, collector_id, options=None):
