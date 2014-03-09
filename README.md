@@ -59,6 +59,8 @@ api.get_survey_details(SURVEY_ID)
 This content is released under the [MIT License](./LICENSE.md).
 
 # Changes
+### 0.1.13
+
 ### 0.1.12
 Changed order of arguments in `get_response`.
 
