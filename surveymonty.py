@@ -14,7 +14,7 @@ import time
 SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
 API_VERSION = "v2"
 
-__version__ = "0.1.13"
+__version__ = "0.1.15"
 
 
 def is_survey_monkey_status_code(status_code):
@@ -413,7 +413,7 @@ class Client(object):
             Dictionary containing the response information.
         """
         num_pages = int(math.ceil(
-            len(respondent_ids) / self.NUM_RESPONSES_PER_CALL
+            len(respondent_ids) / float(self.NUM_RESPONSES_PER_CALL)
         ))
         all_reponses = {}
         for page_index in range(0, num_pages):

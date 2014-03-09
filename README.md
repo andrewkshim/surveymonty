@@ -59,6 +59,9 @@ api.get_survey_details(SURVEY_ID)
 This content is released under the [MIT License](./LICENSE.md).
 
 # Changes
+### 0.1.15
+Bugfix
+
 ### 0.1.14
 Bugfix
 
