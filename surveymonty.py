@@ -418,8 +418,7 @@ class Client(object):
         all_reponses = {}
         for page_index in range(0, num_pages):
           next_reponses = self.get_responses(
-              respondent_ids, survey_id,
-              options, page_index
+            survey_id, respondent_ids, options, page_index
           )
           all_reponses.update(next_reponses)
         return all_reponses
