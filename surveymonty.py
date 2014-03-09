@@ -348,7 +348,7 @@ class Client(object):
       return start_index, end_index
 
     def get_responses(
-        self, respondent_ids, survey_id,
+        self, survey_id, respondent_ids,
         options=None, page_index=0
     ):
         """
@@ -361,10 +361,10 @@ class Client(object):
         convenience method.
 
         Args:
-            respondent_ids: List of respondent ID strings. Respondent IDs can
-                be obtained from get_respondent_list().
             survey_id: String representation of a survey ID number. Survey IDs
                 can be obtained from get_survey_list().
+            respondent_ids: List of respondent ID strings. Respondent IDs can
+                be obtained from get_respondent_list().
             options: Same as other API methods.
             page_index: Integer index of results page. Index 0 corresponds to
                 the first 100 responses, index 1 to the next 100, and so on.
@@ -393,16 +393,16 @@ class Client(object):
                 print("Responses for survey {id} not found.").format(survey_id)
         return response_list
 
-    def get_all_responses(self, respondent_ids, survey_id, options=None):
+    def get_all_responses(self, survey_id, respondent_ids, options=None):
         """
         Convenience method for getting all responses from a survey. Otherwise,
         provides same functionality as get_reponses().
 
         Args:
-            respondent_ids: List of respondent ID strings. Respondent IDs can
-                be obtained from get_respondent_list().
             survey_id: String representation of a survey ID number. Survey IDs
                 can be obtained from get_survey_list().
+            respondent_ids: List of respondent ID strings. Respondent IDs can
+                be obtained from get_respondent_list().
             options: Same as other API methods.
             page_index: Integer index of results page. Index 0 corresponds to
                 the first 100 responses, index 1 to the next 100, and so on.
