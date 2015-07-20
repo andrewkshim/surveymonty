@@ -11,4 +11,5 @@ setup(
     keywords=['SurveyMonkey'],
     license='MIT',
     classifiers=[],
+    install_requires=['requests']
 )
