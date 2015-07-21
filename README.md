@@ -59,6 +59,11 @@ api.get_survey_details(SURVEY_ID)
 This content is released under the [MIT License](./LICENSE.md).
 
 # Changes
+
+### 0.1.18
+- Synced version number with PyPI.
+- Added "requests" module to install\_requires in setup.py.
+
 ### 0.1.16
 Bug fix.
 
