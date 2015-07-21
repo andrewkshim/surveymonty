@@ -14,7 +14,7 @@ import time
 SURVEY_MONKEY_HOST = "https://api.surveymonkey.net"
 API_VERSION = "v2"
 
-__version__ = "0.1.18"
+__version__ = "0.1.19"
 
 
 def is_survey_monkey_status_code(status_code):

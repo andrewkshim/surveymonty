@@ -60,6 +60,9 @@ This content is released under the [MIT License](./LICENSE.md).
 
 # Changes
 
+### 0.1.19
+Added version number for "requests".
+
 ### 0.1.18
 - Synced version number with PyPI.
 - Added "requests" module to install\_requires in setup.py.

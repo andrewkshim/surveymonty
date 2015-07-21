@@ -2,7 +2,7 @@ from setuptools import setup
 setup(
     name='surveymonty',
     py_modules=['surveymonty'],
-    version='0.1.18',
+    version='0.1.19',
     description='Python wrapper for SurveyMonkey API',
     author='Andrew Shim',
     author_email='andrewkshim92@gmail.com',
@@ -11,5 +11,5 @@ setup(
     keywords=['SurveyMonkey'],
     license='MIT',
     classifiers=[],
-    install_requires=['requests']
+    install_requires=['requests>=2.7.0']
 )
