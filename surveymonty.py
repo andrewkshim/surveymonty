@@ -26,7 +26,7 @@ class SurveyMontyError(Exception):
   pass
 
 
-class SurveyMontyAPIError(Exception):
+class SurveyMontyAPIError(SurveyMontyError):
     """
     Custom SurveyMonkey API Exception. Uses status code messages provided at:
     https://developer.surveymonkey.com/mashery/requests_responses
