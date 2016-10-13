@@ -30,6 +30,10 @@ class SurveyMontyAPIError(SurveyMontyError):
     """
     Custom SurveyMonkey API Exception. Uses status code messages provided at:
     https://developer.surveymonkey.com/mashery/requests_responses
+
+    Args:
+        - status_code (int): Ranges from 0 to 5 inclusive or equal to an HTTP status code.
+        - message (str): The exception's error message.
     """
     # Status codes correspond to indicies.
     STATUS_CODE_CATEGORIES = [
@@ -42,24 +46,12 @@ class SurveyMontyAPIError(SurveyMontyError):
     ]
 
     def __init__(self, status_code, message):
-        """
-        Args:
-            status_code: Integer ranging from 0 to 5 inclusive or equal to an
-                HTTP status code.
-        Returns:
-            Called in constructor. Implicitly returns a SurveyMontyAPIError
-            instance.
-        """
         self.status_code = status_code
         if is_survey_monkey_status_code(status_code):
             self.category = self.STATUS_CODE_CATEGORIES[status_code]
         self.message = message or "No message available."
 
     def __str__(self):
-        """
-        Returns:
-            String representation of the SurveyMontyAPIError instance.
-        """
         return "Status code {status_code} {category} - {message}".format(
             status_code=str(self.status_code),
             category=self.category,
@@ -69,7 +61,19 @@ class SurveyMontyAPIError(SurveyMontyError):
 
 class Client(object):
     """
-    API object, call SurveyMonkey API methods on this object.
+    API object, call SurveyMonkey API methods on this object. Both the access
+    token and API key must be passed in the __init__ or set in environment
+    variables.
+
+    Kwargs:
+        - access_token (str or None): A long alphanumeric string. Tied to a specific
+          SurveyMonkey user account, and the owner of the account must authorize you
+          (the developer) to access their token.
+        - api_key (str or None): An alphanumeric string (shorter than access_token).
+          Specific to your developer account and can be viewed in your profile.
+
+    Raises:
+        - SurveyMontyError: If access token and API key are not available.
     """
     ACCESS_TOKEN_NAME = "SURVEY_MONTY_ACCESS_TOKEN"
     API_KEY_NAME = "SURVEY_MONTY_API_KEY"
@@ -77,25 +81,6 @@ class Client(object):
     NUM_RESPONSES_PER_CALL = 100
 
     def __init__(self, access_token=None, api_key=None):
-        """
-        Access token and api key must be passed in or set in environment
-        variables.
-
-        Arguments:
-            access_token: A long alphanumeric string. Tied to a specific
-                SurveyMonkey user account, and the owner of the account must
-                authorize you (the developer) to access their token.
-            api_key: An alphanumeric string (shorter than access_token).
-                Specific to your developer account and can be viewed in your
-                profile.
-
-        Returns:
-            Called in constructor, so you can say this method returns a
-            SurveyMonty instance.
-
-        Raises:
-            SurveyMontyError if access token and api key are not available.
-        """
         if access_token and api_key:
             self._create_session(access_token, api_key)
         else:
@@ -106,16 +91,16 @@ class Client(object):
                 api_key = os.environ[self.API_KEY_NAME]
                 self._create_session(access_token, api_key)
             else:
-                raise SurveyMontyError(
-                    "Missing {access_token} and {api_key} in env.".format(
-                        access_token=self.ACCESS_TOKEN_NAME,
-                        api_key=self.API_KEY_NAME
-                    )
-                )
+                message = (
+                    "Missing access token and API key. Either pass in the "
+                    "`access_token` and `api_key` args in the `Client.__init__ "
+                    "or provide them as the environment variables {} and {}."
+                ).format(self.ACCESS_TOKEN_NAME, self.API_KEY_NAME)
+                raise SurveyMontyError(message)
 
     def _create_session(self, access_token, api_key):
         """
-        Create HTTP session for API communication. Set the session
+        Creates an HTTP session for API communication. Set the session
         header to contain the access token, and the session params to contain
         the API key. Subsequent calls to the API will be done through the
         instance's session.
