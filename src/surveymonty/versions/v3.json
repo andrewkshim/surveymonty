@@ -1,0 +1,502 @@
+{"endpoints": [
+  {
+    "name": "get_me",
+    "method": "GET",
+    "endpoint": "/users/me"
+  },
+  {
+    "name": "get_groups",
+    "method": "GET",
+    "endpoint": "/groups"
+  },
+  {
+    "name": "get_group",
+    "method": "GET",
+    "endpoint": "/groups/{group_id}"
+  },
+  {
+    "name": "get_group_members",
+    "method": "GET",
+    "endpoint": "/groups/{group_id}/members"
+  },
+  {
+    "name": "get_group_member",
+    "method": "GET",
+    "endpoint": "/groups/{group_id}/members/{member_id}"
+  },
+  {
+    "name": "get_surveys",
+    "method": "GET",
+    "endpoint": "/surveys"
+  },
+  {
+    "name": "create_survey",
+    "method": "POST",
+    "endpoint": "/surveys"
+  },
+  {
+    "name": "get_survey",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}"
+  },
+  {
+    "name": "update_survey",
+    "method": "PATCH",
+    "endpoint": "/surveys/{survey_id}"
+  },
+  {
+    "name": "upsert_survey",
+    "method": "PUT",
+    "endpoint": "/surveys/{survey_id}"
+  },
+  {
+    "name": "delete_survey",
+    "method": "DELETE",
+    "endpoint": "/surveys/{survey_id}"
+  },
+  {
+    "name": "get_survey_details",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/details"
+  },
+  {
+    "name": "get_survey_categories",
+    "method": "GET",
+    "endpoint": "/survey_categories"
+  },
+  {
+    "name": "get_survey_templates",
+    "method": "GET",
+    "endpoint": "/survey_templates"
+  },
+  {
+    "name": "get_survey_pages",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/pages"
+  },
+  {
+    "name": "create_survey_page",
+    "method": "POST",
+    "endpoint": "/surveys/{survey_id}/pages"
+  },
+  {
+    "name": "get_survey_page",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}"
+  },
+  {
+    "name": "update_survey_page",
+    "method": "PATCH",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}"
+  },
+  {
+    "name": "upsert_survey_page",
+    "method": "PUT",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}"
+  },
+  {
+    "name": "delete_survey_page",
+    "method": "DELETE",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}"
+  },
+  {
+    "name": "get_survey_page_questions",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/questions"
+  },
+  {
+    "name": "create_survey_page_question",
+    "method": "POST",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/questions"
+  },
+  {
+    "name": "get_survey_page_question",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/questions/{question_id}"
+  },
+  {
+    "name": "update_survey_page_question",
+    "method": "PATCH",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/questions/{question_id}"
+  },
+  {
+    "name": "upsert_survey_page_question",
+    "method": "PUT",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/questions/{question_id}"
+  },
+  {
+    "name": "delete_survey_page_question",
+    "method": "DELETE",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/questions/{question_id}"
+  },
+  {
+    "name": "get_contact_lists",
+    "method": "GET",
+    "endpoint": "/contact_lists"
+  },
+  {
+    "name": "create_contact_list",
+    "method": "POST",
+    "endpoint": "/contact_lists"
+  },
+  {
+    "name": "get_contact_list",
+    "method": "GET",
+    "endpoint": "/contact_lists/{list_id}"
+  },
+  {
+    "name": "update_contact_list",
+    "method": "PATCH",
+    "endpoint": "/contact_lists/{list_id}"
+  },
+  {
+    "name": "upsert_contact_list",
+    "method": "PUT",
+    "endpoint": "/contact_lists/{list_id}"
+  },
+  {
+    "name": "delete_contact_list",
+    "method": "DELETE",
+    "endpoint": "/contact_lists/{list_id}"
+  },
+  {
+    "name": "copy_contact_list",
+    "method": "POST",
+    "endpoint": "/contact_lists/{list_id}/copy"
+  },
+  {
+    "name": "merge_contact_list",
+    "method": "POST",
+    "endpoint": "/contact_lists/{list_id}/merge"
+  },
+  {
+    "name": "get_contact_list_contacts",
+    "method": "GET",
+    "endpoint": "/contact_lists/{list_id}/contacts"
+  },
+  {
+    "name": "create_contact_list_contact",
+    "method": "POST",
+    "endpoint": "/contact_lists/{list_id}/contacts"
+  },
+  {
+    "name": "bulk_get_contact_list_contacts",
+    "method": "GET",
+    "endpoint": "/contact_lists/{list_id}/contacts/bulk"
+  },
+  {
+    "name": "bulk_create_contact_list_contacts",
+    "method": "GET",
+    "endpoint": "/contact_lists/{list_id}/contacts/bulk"
+  },
+  {
+    "name": "get_contacts",
+    "method": "GET",
+    "endpoint": "/contacts"
+  },
+  {
+    "name": "bulk_get_contacts",
+    "method": "GET",
+    "endpoint": "/contacts/bulk"
+  },
+  {
+    "name": "bulk_create_contacts",
+    "method": "POST",
+    "endpoint": "/contacts/bulk"
+  },
+  {
+    "name": "get_contact",
+    "method": "GET",
+    "endpoint": "/contacts/{contact_id}"
+  },
+  {
+    "name": "update_contact",
+    "method": "PATCH",
+    "endpoint": "/contacts/{contact_id}"
+  },
+  {
+    "name": "upsert_contact",
+    "method": "PUT",
+    "endpoint": "/contacts/{contact_id}"
+  },
+  {
+    "name": "delete_contact",
+    "method": "DELETE",
+    "endpoint": "/contacts/{contact_id}"
+  },
+  {
+    "name": "get_contact_fields",
+    "method": "GET",
+    "endpoint": "/contact_fields"
+  },
+  {
+    "name": "get_contact_field",
+    "method": "GET",
+    "endpoint": "/contact_fields/{field_id}"
+  },
+  {
+    "name": "update_contact_field",
+    "method": "PATCH",
+    "endpoint": "/contact_fields/{field_id}"
+  },
+  {
+    "name": "get_survey_collectors",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/collectors"
+  },
+  {
+    "name": "create_survey_collector",
+    "method": "POST",
+    "endpoint": "/surveys/{survey_id}/collectors"
+  },
+  {
+    "name": "get_collector",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}"
+  },
+  {
+    "name": "update_collector",
+    "method": "PATCH",
+    "endpoint": "/collectors/{collector_id}"
+  },
+  {
+    "name": "upsert_collector",
+    "method": "PUT",
+    "endpoint": "/collectors/{collector_id}"
+  },
+  {
+    "name": "delete_collector",
+    "method": "DELETE",
+    "endpoint": "/collectors/{collector_id}"
+  },
+  {
+    "name": "get_collector_messages",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}/messages"
+  },
+  {
+    "name": "create_collector_message",
+    "method": "POST",
+    "endpoint": "/collectors/{collector_id}/messages"
+  },
+  {
+    "name": "get_collector_message",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}/messages/{message_id}"
+  },
+  {
+    "name": "update_collector_message",
+    "method": "PATCH",
+    "endpoint": "/collectors/{collector_id}/messages/{message_id}"
+  },
+  {
+    "name": "upsert_collector_message",
+    "method": "PUT",
+    "endpoint": "/collectors/{collector_id}/messages/{message_id}"
+  },
+  {
+    "name": "delete_collector_message",
+    "method": "DELETE",
+    "endpoint": "/collectors/{collector_id}/messages/{message_id}"
+  },
+  {
+    "name": "send_collector_message",
+    "method": "POST",
+    "endpoint": "/collectors/{collector_id}/messages/{message_id}/send"
+  },
+  {
+    "name": "get_collector_message_recipients",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}/messages/{message_id}/recipients"
+  },
+  {
+    "name": "create_collector_message_recipient",
+    "method": "POST",
+    "endpoint": "/collectors/{collector_id}/messages/{message_id}/recipients"
+  },
+  {
+    "name": "bulk_create_collector_message_recipients",
+    "method": "POST",
+    "endpoint": "/collectors/{collector_id}/messages/{message_id}/recipients/bulk"
+  },
+  {
+    "name": "get_collector_recipients",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}/recipients"
+  },
+  {
+    "name": "get_collector_recipient",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}/recipients/{recipient_id}"
+  },
+  {
+    "name": "delete_collector_recipient",
+    "method": "DELETE",
+    "endpoint": "/collectors/{collector_id}/recipients/{recipient_id}"
+  },
+  {
+    "name": "get_survey_responses",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/responses"
+  },
+  {
+    "name": "get_collector_responses",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}/responses"
+  },
+  {
+    "name": "create_collector_response",
+    "method": "POST",
+    "endpoint": "/collectors/{collector_id}/responses"
+  },
+  {
+    "name": "bulk_get_survey_responses",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/responses/bulk"
+  },
+  {
+    "name": "bulk_get_collector_responses",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}/responses/bulk"
+  },
+  {
+    "name": "get_survey_response",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/responses/{responses_id}"
+  },
+  {
+    "name": "update_survey_response",
+    "method": "PATCH",
+    "endpoint": "/surveys/{survey_id}/responses/{responses_id}"
+  },
+  {
+    "name": "upsert_survey_response",
+    "method": "PUT",
+    "endpoint": "/surveys/{survey_id}/responses/{responses_id}"
+  },
+  {
+    "name": "delete_survey_response",
+    "method": "DELETE",
+    "endpoint": "/surveys/{survey_id}/responses/{responses_id}"
+  },
+  {
+    "name": "get_collector_response",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}/responses/{responses_id}"
+  },
+  {
+    "name": "update_collector_response",
+    "method": "PATCH",
+    "endpoint": "/collectors/{collector_id}/responses/{responses_id}"
+  },
+  {
+    "name": "upsert_collector_response",
+    "method": "PUT",
+    "endpoint": "/collectors/{collector_id}/responses/{responses_id}"
+  },
+  {
+    "name": "delete_collector_response",
+    "method": "DELETE",
+    "endpoint": "/collectors/{collector_id}/responses/{responses_id}"
+  },
+  {
+    "name": "get_survey_response_details",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/responses/{responses_id}/details"
+  },
+  {
+    "name": "get_collector_response_details",
+    "method": "GET",
+    "endpoint": "/collectors/{collector_id}/responses/{responses_id}/details"
+  },
+  {
+    "name": "get_survey_rollups",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/rollups"
+  },
+  {
+    "name": "get_survey_page_rollups",
+    "method": "get",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/rollups"
+  },
+  {
+    "name": "get_survey_page_question_rollups",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/questions/{question_id}/rollups"
+  },
+  {
+    "name": "get_survey_trends",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/trends"
+  },
+  {
+    "name": "get_survey_page_trends",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/trends"
+  },
+  {
+    "name": "get_survey_page_question_trends",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/questions/{question_id}/trends"
+  },
+  {
+    "name": "get_webhooks",
+    "method": "GET",
+    "endpoint": "/webhooks"
+  },
+  {
+    "name": "create_webhook",
+    "method": "POST",
+    "endpoint": "/webhooks"
+  },
+  {
+    "name": "get_webhook",
+    "method": "GET",
+    "endpoint": "/webhooks/{webhook_id}"
+  },
+  {
+    "name": "update_webhook",
+    "method": "PATCH",
+    "endpoint": "/webhooks/{webhook_id}"
+  },
+  {
+    "name": "upsert_webhook",
+    "method": "PUT",
+    "endpoint": "/webhooks/{webhook_id}"
+  },
+  {
+    "name": "delete_webhook",
+    "method": "DELETE",
+    "endpoint": "/webhooks/{webhook_id}"
+  },
+  {
+    "name": "get_benchmark_bundles",
+    "method": "GET",
+    "endpoint": "/benchmark_bundles"
+  },
+  {
+    "name": "get_benchmark_bundle",
+    "method": "GET",
+    "endpoint": "/benchmark_bundles/{bundle_id}"
+  },
+  {
+    "name": "get_benchmark_bundle_analysis",
+    "method": "GET",
+    "endpoint": "/benchmark_bundles/{bundle_id}/analyze"
+  },
+  {
+    "name": "get_survey_page_question_benchmark",
+    "method": "GET",
+    "endpoint": "/surveys/{survey_id}/pages/{page_id}/questions/{question_id}/benchmark"
+  },
+  {
+    "name": "get_errors",
+    "method": "GET",
+    "endpoint": "/errors"
+  },
+  {
+    "name": "get_error",
+    "method": "GET",
+    "endpoint": "/errors/{error_id}"
+  }
+]}
