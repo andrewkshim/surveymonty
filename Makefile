@@ -11,3 +11,7 @@ integration-tests:
 
 unit-tests:
 	@nose2 tests.unit
+
+deploy:
+	@python setup.py sdist upload
+	@python setup.py bdist_wheel upload
