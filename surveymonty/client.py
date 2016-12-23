@@ -1,3 +1,7 @@
+"""
+surveymonty.client
+------------------
+"""
 import json
 import logging
 import requests
@@ -9,7 +13,16 @@ from .exceptions import SurveyMontyAPIError
 _logger = logging.getLogger(__name__)
 
 
-class SurveyMontyClient(object):
+class Client(object):
+    """
+    Light wrapper for convenient access to the SurveyMonkey API.
+
+    Args:
+        - access_token: (str) your SurveyMonkey API access token
+
+    Kwargs:
+        - version: (str) the SurveyMonkey API version e.g. "v3"
+    """
 
     def __init__(self, access_token, version=constants.DEFAULT_VERSION):
         self.version = version
@@ -20,6 +33,13 @@ class SurveyMontyClient(object):
             setattr(self, api_spec['name'], api_fn)
 
     def _make_api_fn(self, api_spec, access_token):
+        """
+        Args:
+            - api_spec: (dict) the config spec for an API endpoint
+            - access_token: (str) your SurveyMonkey API access token
+
+        Returns: (function) a function that knows how to query an API endpoint
+        """
         endpoint = api_spec['endpoint']
         name = api_spec['name']
         url_param_names = utils.parse_url_params(endpoint)
@@ -44,6 +64,18 @@ class SurveyMontyClient(object):
         return api_fn
 
     def _request(self, method, endpoint, access_token, **request_kwargs):
+        """
+        Wrapper over requests.request.
+
+        Args:
+            - method: (str) e.g. "GET", "POST"
+            - endpoint: (str) e.g. "/surveys"
+            - access_token: (str) your SurveyMonkey API access token
+
+        Kwargs: same as those of requests.request
+
+        Returns: (dict) the JSON response for the given API endpoint
+        """
         request_kwargs['headers'] = utils.finalize_headers(
             request_kwargs.get('headers', {}),
             access_token
