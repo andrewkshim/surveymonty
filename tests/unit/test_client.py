@@ -9,7 +9,7 @@ class TestClient(unittest.TestCase):
 
     def setUp(self):
         self.access_token = 'stub_access_token'
-        self.client = surveymonty.client.SurveyMontyClient(self.access_token)
+        self.client = surveymonty.Client(self.access_token)
 
     def assert_request_mock_called(self, mock_request, method, endpoint, **kwargs):
         url = utils.make_url(self.client.version, endpoint)

@@ -8,7 +8,7 @@ import unittest
 
 def load_local_surveymonkey_config():
     """
-    Loads your local SurveyMonkey config. This is a secret config that should 
+    Loads your local SurveyMonkey config. This is a secret config that should
     contain, among other things, your access token. Do not place this config
     in version control.
 
@@ -23,19 +23,23 @@ class TestAPI(unittest.TestCase):
 
     def setUp(self):
         self.config = load_local_surveymonkey_config()
-        self.client = surveymonty.client.SurveyMontyClient(self.config['access_token'])
+        self.client = surveymonty.Client(self.config['access_token'])
 
     def test_get_me(self):
         self.assertIsInstance(self.client.get_me(), dict)
 
-    def test_get_surveys(self):
-        self.assertIsInstance(self.client.get_surveys(), dict)
-
     def test_get_groups(self):
         self.assertIsInstance(self.client.get_groups(), dict)
 
+    def test_get_surveys(self):
+        self.assertIsInstance(self.client.get_surveys(), dict)
+
+    def test_get_survey(self):
+        survey_id = self.config['test_survey_id']
+        survey = self.client.get_survey(survey_id)
+        self.assertIsInstance(survey, dict)
+        self.assertEqual(survey['id'], survey_id)
+
 
 if __name__ == "__main__":
-    if 'DEBUG' in os.environ:
-        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     unittest.main()
