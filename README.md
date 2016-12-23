@@ -1,10 +1,10 @@
 # SurveyMonty
 
 **!!! NOTICE 2016-12-22 !!!** This project is no longer actively maintained.
-It will work with the latest SurveyMonkey API (V3), but there are no
+It will work with the latest SurveyMonkey API (v3), but there are no
 guarantees for later versions. This is a very light wrapper though,
 read through the rest of this doc and you'll have a good idea on
-how things work, so you'll be able to modify yourself if you need to 😀.
+how things work, so you'll be able to modify it yourself if you need to 😀.
 
 SurveyMonty is a Python wrapper for the SurveyMonkey API. Why the name?
 Because this is a wrapper in Python, and Python makes me think of
