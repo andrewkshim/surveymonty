@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 with open('./surveymonty/VERSION', 'r') as version_file:
-    version = version_file.read()
+    version = version_file.read().strip()
 
 
 setup(
@@ -14,9 +14,7 @@ setup(
     ],
 
     packages=find_packages(),
-    package_data={
-        '': ['VERSION']
-    },
+    include_package_data=True,
 
     author='Andrew Shim',
     author_email='andrewkshim92@gmail.com',
