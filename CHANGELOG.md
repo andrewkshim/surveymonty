@@ -11,7 +11,7 @@ Fixed
 Security
 -->
 
-## 0.2.5
+## 0.2.5 - 2016-12-22
 ### Added
 - Support for SurveyMonkey API V3.
 
