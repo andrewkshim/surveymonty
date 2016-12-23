@@ -10,7 +10,15 @@ def load_local_surveymonkey_config():
     """
     Loads your local SurveyMonkey config. This is a secret config that should
     contain, among other things, your access token. Do not place this config
-    in version control.
+    in version control. The config should be a JSON object that looks like:
+
+    {
+        "access_token": "your_access_token",
+        "test_survey_id": "id_for_a_survey_you_created"
+    }
+
+    The file should be named "surveymonkey.config.json" and should live in the
+    root of this repo.
 
     Returns: (dict) the config
     """
