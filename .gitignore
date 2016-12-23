@@ -1,3 +1,7 @@
+# Project-specific
+surveymonkey.config.json
+venv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -58,5 +62,3 @@ docs/_build/
 
 # PyPI
 .pypirc
-
-test_surveymonty.py

@@ -1,15 +1,25 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
+
+with open('./surveymonty/VERSION', 'r') as version_file:
+    version = version_file.read().strip()
+
+
 setup(
     name='surveymonty',
-    py_modules=['surveymonty'],
-    version='0.1.19',
-    description='Python wrapper for SurveyMonkey API',
+    version=version,
+
+    install_requires=[
+        'requests>=2.12.4,<3.0'
+    ],
+
+    packages=find_packages(),
+    include_package_data=True,
+
     author='Andrew Shim',
     author_email='andrewkshim92@gmail.com',
-    url='https://github.com/andrewkshim/SurveyMonty',
-    download_url='https://github.com/andrewkshim/SurveyMonty/tarball/1.0',
-    keywords=['SurveyMonkey'],
+    description='Python wrapper for SurveyMonkey API',
     license='MIT',
-    classifiers=[],
-    install_requires=['requests>=2.7.0']
+    keywords=['SurveyMonkey'],
+    url='https://github.com/andrewkshim/SurveyMonty',
 )

@@ -1,117 +1,109 @@
 # SurveyMonty
 
-This is a Python wrapper for the SurveyMonkey API. Why the name? Because this
-is a wrapper in Python, and Python makes me think of [Monty Python][1]. Also,
-"monkey" and "Monty" both start with "mon", hence SurveyMonty.
+**!!! NOTICE 2016-12-22 !!!** This project is no longer actively maintained.
+It will work with the latest SurveyMonkey API (V3), but there are no
+guarantees for later versions. This is a very light wrapper though,
+read through the rest of this doc and you'll have a good idea on
+how things work, so you'll be able to modify yourself if you need to 😀.
 
-[1]:http://en.wikipedia.org/wiki/Monty_Python
+SurveyMonty is a Python wrapper for the SurveyMonkey API. Why the name?
+Because this is a wrapper in Python, and Python makes me think of
+[Monty Python](http://en.wikipedia.org/wiki/Monty_Python).
+Also, "monkey" and "Monty" both start with "mon".
+
+This content is released under the [MIT License](./LICENSE.md).
+
 
 # Installation
 ```bash
 $ pip install surveymonty
 ```
 
-# Example
-This wrapper is very lightweight and provides no object encapsulation of the
-responses. Rather, it provides the API methods in Python form, through which
-you can obtain the JSON responses and do with them as you please.
 
-Note, the API requires an access token and api key. You can provide these
-either through environment variables or in the code itself.
+# Usage
+The SurveyMonty `Client` is a very lightweight wrapper over the
+SurveyMonkey API and only exists for minor convenience.
 
-### Setting credentials through environment variables
-```bash
-export SURVEY_MONKEY_ACCESS_TOKEN="YOUR_ACCESS_TOKEN"
-export SURVEY_MONKEY_API_KEY="YOUR_API_KEY"
-```
+The client requires your SurveyMonkey access token as its only argument:
 
-Sample Python script using SurveyMonty:
 ```python
 import surveymonty
 
-api = surveymonty.Client()
-api.get_survey_list() # retrieve survey ids
-api.get_survey_details(SURVEY_ID) # use a SURVEY_ID from above
+client = surveymonty.Client("YOUR_ACCESS_TOKEN")
 ```
 
-### Setting credentials in code
+You should be able to find the access tokens in the Settings for
+your SurveyMonkey apps: https://developer.surveymonkey.com/apps
+
+The `client` has methods that correspond to the SurveyMonkey API
+endpoints:
+
 ```python
-import surveymonty
-
-ACCESS_TOKEN = "YOUR_ACCESS_TOKEN"
-API_KEY = "YOUR_API_KEY"
-
-api = surveymonty.Client(ACCESS_TOKEN, API_KEY)
-api.get_survey_list()
-api.get_survey_details(SURVEY_ID)
+# GET /surveys
+surveys = client.get_surveys()
+print(surveys)
+{
+  'page': 1,
+  'data': [
+    {
+      'id': 'FOO',
+      'href': 'https://api.surveymonkey.net/v3/surveys/FOO',
+      'nickname': '',
+      'title': 'FOO Survey'
+    },
+    {
+      'id': 'BAR',
+      'href': 'https://api.surveymonkey.net/v3/surveys/BAR',
+      'nickname': '',
+      'title': 'BAR Survey'
+    }
+  ],
+  'total': 2,
+  'per_page': 50,
+  'links': {
+    'self': 'https://api.surveymonkey.net/v3/surveys?page=1&per_page=50'
+  }
+}
 ```
 
-## Available API Methods
-- get\_survey\_details()
-- get\_survey\_list()
-- get\_collector\_list()
-- get\_respondent\_list()
-- get\_responses()
-- get\_response\_count()
-- get\_user\_details()
+You can find all of the supported API methods in the
+[V3 config file](./surveymonty/versions/v3.json) which drives the
+client. There's one entry for each endpoint e.g.:
 
-# License
-This content is released under the [MIT License](./LICENSE.md).
+```json
+  {
+    "name": "get_surveys",
+    "method": "GET",
+    "endpoint": "/surveys"
+  }
+```
 
-# Changes
+The `name` corresponds to the method name on the `client` object,
+while the `method` and `endpoint` correspond to a SurveyMonkey
+API endpoint.
 
-### 0.1.19
-Added version number for "requests".
+For API endpoints that require URL params, you must supply the
+`client` method with corresponding arguments:
 
-### 0.1.18
-- Synced version number with PyPI.
-- Added "requests" module to install\_requires in setup.py.
+```python
+# GET /surveys/your_survey_id
+client.get_survey("your_survey_id")
+```
 
-### 0.1.16
-Bug fix.
+To supply request body payloads or query params, you do the same
+as you would with the [Python requests library](http://docs.python-requests.org/en/master/user/quickstart/):
 
-### 0.1.15
-Bug fix.
+```python
+# GET /surveys?per_page=1
+client.get_surveys(params={"per_page": 1})
 
-### 0.1.14
-Bug fix.
+# POST /surveys
+client.create_survey(json={"title": "New Survey"})
+```
 
-### 0.1.13
-Bug fix.
+In fact, any `**kwargs` that you pass into the `client` methods
+will just get passed through to the `requests.request` method.
 
-### 0.1.12
-Changed order of arguments in `get_response`.
 
-### 0.1.11
-Updated `get_response` method to work with paged results.
-
-### 0.1.10
-Use wheel.
-
-### 0.1.9
-Fix.
-
-### 0.1.8
-Reattempt failed queries.
-
-### 0.1.7
-Remove print statement.
-
-### 0.1.6
-Bug fix.
-
-### 0.1.5
-Bug fix.
-
-### 0.1.4
-Input accepts numbers for IDs.
-
-### 0.1.3
-Made error handling more robust.
-
-### 0.1.2
-Bug fix.
-
-### 0.1.1
-Moved ACCESS\_TOKEN and API\_KEY access to environment variables.
-
+# Resources
+- [SurveyMonkey API docs](https://developer.surveymonkey.com/api/v3/)

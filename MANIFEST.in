@@ -1,0 +1,2 @@
+include surveymonty/VERSION
+include surveymonty/versions/*.json
